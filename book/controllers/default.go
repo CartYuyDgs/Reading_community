@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"Reading_community/book/models"
 	"fmt"
 	"github.com/astaxie/beego"
 )
@@ -20,4 +21,5 @@ func (c *MainController) Hi() {
 	c.Data["Website"] = "beego.me"
 	c.Data["Email"] = "astaxie@gmail.com"
 	c.TplName = "index.tpl"
+	models.PrintUser()
 }
