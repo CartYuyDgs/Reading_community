@@ -1,5 +1,6 @@
 package sysinit
 
 func init() {
-	dbinit()
+	sysinit()
+	dbinit("w")
 }
