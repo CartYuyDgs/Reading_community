@@ -7,9 +7,33 @@ import (
 )
 
 //数据库初始化
-func dbinit(alias string) {
+func dbinit(aliases ...string) {
+
+	isDev := ("dev" == beego.AppConfig.String("runmode"))
+
+	if len(aliases) > 0 {
+		for _, alias := range aliases {
+			registDatabase(alias)
+			if alias == "w" {
+				orm.RunSyncdb("default", false, true) //自动建表
+			}
+		}
+	} else {
+		registDatabase("w")
+		orm.RunSyncdb("default", false, true) //自动建表
+	}
+
+	if isDev {
+		orm.Debug = isDev
+	}
+}
+
+func registDatabase(alias string) {
+	if len(alias) <= 0 {
+		return
+	}
 	dbAlias := alias //default
-	if "w" == alias || "default" == alias || len(alias) <= 0 {
+	if "w" == alias || "default" == alias {
 		dbAlias = "default"
 		alias = "w"
 	}
@@ -26,13 +50,4 @@ func dbinit(alias string) {
 	//root:199411@tcp(192.168.31.205:3306)/test?charset=utf8"
 	orm.RegisterDataBase(dbAlias, "mysql", dbUser+":"+dbPasswd+"@tcp("+dbHost+":"+dbPort+")"+"/"+dbName+"?charset=utf8")
 
-	isDev := ("dev" == beego.AppConfig.String("runmode"))
-
-	if "w" == alias {
-		orm.RunSyncdb("default", false, true) //自动建表
-	}
-
-	if isDev {
-		orm.Debug = isDev
-	}
 }
